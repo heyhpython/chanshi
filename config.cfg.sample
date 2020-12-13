@@ -1,0 +1,3 @@
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ECHO = False
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://citi:leyantech@localhost/citi?charset=utf8mb4&autocommit=true"

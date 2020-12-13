@@ -1,0 +1,31 @@
+[[source]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = '==0.62.0'
+uvicorn = '==0.13.0'
+blinker = '==1.4.0'
+flask-sqlalchemy = '2.4.4'
+
+
+
+[dev-packages]
+ipython='*'
+pytest = "*"
+pytest-cov = "*"
+flask-shell-ipython = "*"
+pytest-watch = "*"
+pylint = "*"
+pytest-flake8 = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+lint = "python -m pytest --flake8"
+test = "python -m pytest --cov=citi --cov-report html --cov-report term"
+start-web = "pipenv run uvicorn chanshi.app:app --host 0.0.0.0 --port 9000"
+start-web-dev = "pipenv run uvicorn chanshi.app:app --host 0.0.0.0 --port 9000 --reload"
+init_command = "pipenv run pip install --editable . "
