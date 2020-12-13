@@ -4,15 +4,18 @@ import logging
 from chanshi.mixins import Application
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from flask_migrate import Migrate
+from starlette.responses import JSONResponse
 
-from chanshi.signals import booting
-from chanshi import ext
 from chanshi.utils import init_config
-
+from chanshi.signals import booting
+from chanshi import user  # noqa
+from chanshi import ext  # noqa
+from chanshi.errors import BaseResponseError
 
 app = Application('chanshi')
 init_config(app)
+booting.send(app)
+
 # 跨域
 app.add_middleware(
     CORSMiddleware,
@@ -38,10 +41,30 @@ async def after_request(req: Request, call_nxt):
     return response
 
 
+@app.exception_handler(500)
+async def handle_exception(req, exc):
+    logger.error(exc)
+    return JSONResponse(
+        status_code=500,
+        content=dict(
+            code=500,
+            message=str(exc)
+        )
+    )
+
+
+@app.exception_handler(BaseResponseError)
+async def handle_exception(req, exc):
+    logger.error(exc)
+    return JSONResponse(
+        status_code=exc.code,
+        content=dict(
+            code=exc.code,
+            message=exc.message
+        )
+    )
+
+
 @app.get('/')
 def index():
     return 'ok'
-
-
-booting.send(app)
-Migrate(app, ext.db)

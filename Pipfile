@@ -8,8 +8,7 @@ fastapi = '==0.62.0'
 uvicorn = '==0.13.0'
 blinker = '==1.4.0'
 flask-sqlalchemy = '2.4.4'
-
-
+pymysql = "*"
 
 [dev-packages]
 ipython='*'
@@ -19,6 +18,7 @@ flask-shell-ipython = "*"
 pytest-watch = "*"
 pylint = "*"
 pytest-flake8 = "*"
+pymysql = "*"
 
 [requires]
 python_version = "3.9"
