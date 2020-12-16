@@ -9,6 +9,10 @@ uvicorn = '==0.13.0'
 blinker = '==1.4.0'
 flask-sqlalchemy = '2.4.4'
 pymysql = "*"
+requests='*'
+flask-cache = "*"
+werkzeug = '==0.15.2'
+redis = "*"
 
 [dev-packages]
 ipython='*'

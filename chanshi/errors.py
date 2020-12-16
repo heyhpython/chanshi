@@ -7,3 +7,11 @@ class BaseResponseError(Exception):
             self.code = code
         if message is not None:
             self.message = message
+
+
+class NotFoundError(BaseResponseError):
+    code = 404
+
+
+class WeChatError(BaseResponseError):
+    code = 500

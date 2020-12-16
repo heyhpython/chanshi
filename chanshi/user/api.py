@@ -1,50 +1,36 @@
 import logging
-from typing import Optional
 
-from fastapi import APIRouter
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Query, Body
 
 from .models import User
-from chanshi.mixins import PaginationMixin
 from chanshi.user import validators
 from chanshi.ext import db
-from chanshi.errors import BaseResponseError
+from chanshi.client import wechat_client
 
 api = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@api.get('/')
-async def users_api(
-        page: Optional[int] = validators.page, size: Optional[int] = validators.size,
-        search: Optional[str] = validators.search, ordering: Optional[str] = validators.ordering):
-    query = User.query
-    pagination = PaginationMixin.get_pagination(
-        User, query, search_fields=User.search_fields,
-        args={"page": page, "size": size, "search": search, "ordering": ordering}
-
-    )
-    return {
-        "data": pagination.items,
-        "pagination": PaginationMixin.dump_pagination(pagination)
-    }
-
-
-@api.post('/', response_class=validators.UserResp)
-async def users_api(user: validators.User):
-    user = User(**user.dict())
+@api.post('/sessions', response_model=validators.SessionOut)
+async def create_session(session_in: validators.SessionIn):
+    """
+    通过微信js_code创建微信的session
+    """
+    # 1. 通过js_code获取 session_key
+    resp = wechat_client.code_2_session(session_in.js_code)
+    user = User.find_or_create(openid=resp['openid'], unionid=resp['unionid'])
     db.session.add(user)
-    try:
-        db.session.commit()
-    except IntegrityError as e:
-        db.session.rollback()
-        logger.error(e)
-        raise BaseResponseError(code=400, message='用户名重复')
-    logger.error(user)
-    return user.to_dict()
+    db.session.commit()
+    # 2.通过session_key 获取用户信息
+    return resp
 
 
-@api.get('/{user_id}', response_model=validators.UserResp)
-async def user_api(user_id):
-    user = User.query.get(user_id)
+@api.post('/users/{openid}', response_model=validators.UserResp)
+async def update_user(openid=Query(None, description='用户在微信的唯一标识'),
+                      user_id: validators.UserIn = Body(None)):
+    """
+    更新用户信息，前端获取用户信息之后的回调
+    """
+    user = User.query.filter_by(openid=openid).first_or_404()
+    user.update(**user_id.dict(exclude_unset=True))
     return user

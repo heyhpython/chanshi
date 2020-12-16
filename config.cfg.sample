@@ -1,3 +1,14 @@
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO = False
-SQLALCHEMY_DATABASE_URI = "mysql+pymysql://citi:leyantech@localhost/citi?charset=utf8mb4&autocommit=true"
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://user:psd@localhost/chanshidb?charset=utf8mb4"
+
+
+WECHAT_API_ENDPOINT = ''
+WECHAT_TOKEN = ''
+WECHAT_APPID = 'x'
+WECHAT_APPSECRET = 'x'
+
+
+# 缓存配置
+CACHE_TYPE = 'simple
+CACHE_REDIS_URL = "redis://127.0.0.1:6379/1"

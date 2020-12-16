@@ -10,6 +10,7 @@ from chanshi.utils import init_config
 from chanshi.signals import booting
 from chanshi import user  # noqa
 from chanshi import ext  # noqa
+from chanshi import client  # noqa
 from chanshi.errors import BaseResponseError
 
 app = Application('chanshi')

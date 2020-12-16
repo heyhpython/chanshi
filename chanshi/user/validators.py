@@ -10,15 +10,23 @@ class OrmModeBaseModel(BaseModel):
         orm_mode = True
 
 
-class User(BaseModel):
-    username: str
+class UserIn(BaseModel):
+    username: Optional[str]
     nick_name: Optional[str]
+    avatar: Optional[str]
+    gender: Optional[int]
+    mobile: Optional[str]
 
 
 class UserResp(OrmModeBaseModel):
     id: int
     username: str
     nick_name: Optional[str]
+    openid: str
+    unionid: str
+    mobile: str
+    avatar: Optional[str]
+    gender: Optional[int]
     created_at: datetime
     updated_at: datetime
 
@@ -31,3 +39,14 @@ size = Query(10, gt=4, lt=100)
 search = Query(None, max_length=32)
 ordering = Query(None, max_length=32)
 
+
+class SessionIn(BaseModel):
+    """创建session入参"""
+    js_code: str
+
+
+class SessionOut(BaseModel):
+    """创建session返回"""
+    session_key: str
+    openid: str
+    unionid: str

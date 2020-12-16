@@ -1,15 +1,13 @@
 import os
 import re
 import logging
-from typing import Any
 from datetime import datetime
 
-from fastapi import FastAPI, encoders
+from fastapi import FastAPI
 
 from flask.config import Config
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
 from sqlalchemy import DATETIME, Column, Integer, text, or_
-from pydantic import BaseModel
 from sqlalchemy.inspection import inspect
 
 logger = logging.getLogger(__name__)
@@ -101,6 +99,11 @@ class BasicMixin(object):
                 val = val.isoformat()
             data[col.name] = val
         return data
+
+    def update(self, **kwargs):
+        for attr, val in kwargs.items():
+            if hasattr(self, attr):
+                setattr(self, attr, val)
 
 
 def get_ordering_field(ordering):
